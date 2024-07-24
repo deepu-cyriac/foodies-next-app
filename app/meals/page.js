@@ -1,12 +1,18 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 
 import classes from './page.module.css';
 import MealsGrid from '@/components/meals/meals-grid';
 import { getMeals } from '@/lib/meals';
 
+async function Meals() {
+  const meals = await getMeals();
+  return <MealsGrid meals={meals}/>
+}
+
 export default async function MealsPage() {
 
-  const meals = await getMeals();
+  
 
   return (
     <>
@@ -20,7 +26,13 @@ export default async function MealsPage() {
         </p>
       </header>
       <main className={classes.main}>
-        <MealsGrid meals={meals}/>
+        {/* suspense allows you show loading states until data is loaded! */}
+        <Suspense fallback={<p className={classes.loading}>
+        Fetching meals...
+    </p>}>
+        <Meals />
+        </Suspense>
+        
       </main>
     </>
   );
